@@ -1,7 +1,17 @@
 import { Stack, useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+import {
+  ActivityIndicator,
+  Linking,
+  Modal,
+  Platform,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 
+import { CompassView } from '../../src/components/CompassView';
 import { ScoreHeader } from '../../src/components/ScoreHeader';
 import { StationMap } from '../../src/components/StationMap';
 import { TaskModal } from '../../src/components/TaskModal';
@@ -16,6 +26,8 @@ export default function PlayGame() {
   const [stations, setStations] = useState<Station[]>([]);
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [selectedStation, setSelectedStation] = useState<Station | null>(null);
+  const [compassStation, setCompassStation] = useState<Station | null>(null);
 
   const { completedStationIds, score, completeStation } = useProgress();
   const { position, activeStation, permissionDenied, errorMessage: geoError, closeActiveStation } =
@@ -45,6 +57,26 @@ export default function PlayGame() {
       ? { ...stations[0], latitudeDelta: 0.02, longitudeDelta: 0.02 }
       : { latitude: 52.520008, longitude: 13.404954, latitudeDelta: 0.05, longitudeDelta: 0.05 };
 
+  function handleNavigate() {
+    if (!selectedStation) return;
+    const { latitude, longitude } = selectedStation;
+    const fallbackUrl = `https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}&travelmode=walking`;
+    const url =
+      Platform.select({
+        ios: `maps://?daddr=${latitude},${longitude}&dirflg=w`,
+        android: `google.navigation:q=${latitude},${longitude}&mode=w`,
+      }) ?? fallbackUrl;
+
+    setSelectedStation(null);
+    Linking.openURL(url).catch(() => Linking.openURL(fallbackUrl));
+  }
+
+  function handleCompass() {
+    if (!selectedStation) return;
+    setCompassStation(selectedStation);
+    setSelectedStation(null);
+  }
+
   return (
     <View style={styles.container}>
       <Stack.Screen options={{ title: game?.name ?? 'Spielen' }} />
@@ -60,12 +92,47 @@ export default function PlayGame() {
 
       {allCompleted && <Text style={styles.done}>🎉 Alle Stationen gelöst! Endpunktzahl: {score}</Text>}
 
-      <StationMap
-        stations={stations}
-        completedStationIds={completedStationIds}
-        playerPosition={position}
-        initialRegion={initialRegion}
-      />
+      {compassStation ? (
+        <CompassView
+          station={compassStation}
+          position={position}
+          onClose={() => setCompassStation(null)}
+        />
+      ) : (
+        <StationMap
+          stations={stations}
+          completedStationIds={completedStationIds}
+          playerPosition={position}
+          initialRegion={initialRegion}
+          onStationPress={setSelectedStation}
+        />
+      )}
+
+      <Modal
+        visible={selectedStation !== null}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setSelectedStation(null)}
+      >
+        <TouchableOpacity
+          style={styles.sheetBackdrop}
+          activeOpacity={1}
+          onPress={() => setSelectedStation(null)}
+        >
+          <View style={styles.sheet}>
+            <Text style={styles.sheetTitle}>{selectedStation?.name}</Text>
+            <TouchableOpacity style={styles.sheetButton} onPress={handleNavigate}>
+              <Text style={styles.sheetButtonText}>In Karten-App navigieren</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.sheetButton} onPress={handleCompass}>
+              <Text style={styles.sheetButtonText}>Kompassmodus</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.sheetCancel} onPress={() => setSelectedStation(null)}>
+              <Text style={styles.sheetCancelText}>Abbrechen</Text>
+            </TouchableOpacity>
+          </View>
+        </TouchableOpacity>
+      </Modal>
 
       <TaskModal
         station={activeStation}
@@ -102,5 +169,42 @@ const styles = StyleSheet.create({
     padding: 12,
     textAlign: 'center',
     fontWeight: '700',
+  },
+  sheetBackdrop: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'flex-end',
+  },
+  sheet: {
+    backgroundColor: 'white',
+    borderTopLeftRadius: 16,
+    borderTopRightRadius: 16,
+    padding: 24,
+    gap: 12,
+  },
+  sheetTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    textAlign: 'center',
+    marginBottom: 8,
+  },
+  sheetButton: {
+    backgroundColor: '#2E6BE6',
+    borderRadius: 12,
+    padding: 16,
+    alignItems: 'center',
+  },
+  sheetButtonText: {
+    color: 'white',
+    fontWeight: '700',
+    fontSize: 16,
+  },
+  sheetCancel: {
+    padding: 12,
+    alignItems: 'center',
+  },
+  sheetCancelText: {
+    color: '#888',
+    fontWeight: '600',
   },
 });
