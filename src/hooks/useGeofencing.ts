@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import type { Station } from '../types/game';
 import { getErrorMessage } from '../utils/errors';
 import { distanceMeters } from '../utils/geo';
+import { playStationAlert } from '../utils/sound';
 
 export interface GeofencingState {
   position: { latitude: number; longitude: number } | null;
@@ -52,6 +53,7 @@ export function useGeofencing(stations: Station[], completedStationIds: Set<stri
             .find((station) => distanceMeters(here, station) <= station.radiusMeters);
 
           if (nearby) {
+            playStationAlert();
             setActiveStation(nearby);
           }
         }

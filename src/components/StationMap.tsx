@@ -2,6 +2,7 @@ import { Fragment } from 'react';
 import MapView, { Circle, Marker, Region } from 'react-native-maps';
 import { StyleSheet } from 'react-native';
 
+import { StationMarkerIcon } from './StationMarker';
 import type { Station } from '../types/game';
 
 interface StationMapProps {
@@ -37,9 +38,11 @@ export function StationMap({
             <Marker
               coordinate={station}
               title={station.name}
-              pinColor={isCompleted ? 'green' : 'red'}
+              anchor={{ x: 0.5, y: 0.5 }}
               onPress={onStationPress ? () => onStationPress(station) : undefined}
-            />
+            >
+              <StationMarkerIcon completed={isCompleted} />
+            </Marker>
             <Circle
               center={station}
               radius={station.radiusMeters}
