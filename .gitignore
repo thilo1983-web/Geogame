@@ -36,9 +36,6 @@ yarn-error.*
 # typescript
 *.tsbuildinfo
 
-# Codespaces auto-start log
-expo-tunnel.log
-
 # generated native folders
 /ios
 /android

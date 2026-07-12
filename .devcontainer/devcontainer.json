@@ -1,6 +1,5 @@
 {
   "name": "Geogame (Expo)",
   "image": "mcr.microsoft.com/devcontainers/javascript-node:1-22-bookworm",
-  "postCreateCommand": "npm install --legacy-peer-deps",
-  "postStartCommand": "bash .devcontainer/start-expo.sh"
+  "postCreateCommand": "npm install --legacy-peer-deps"
 }
