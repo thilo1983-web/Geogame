@@ -1,6 +1,8 @@
 import * as Location from 'expo-location';
 import { useEffect, useState } from 'react';
 
+import { getErrorMessage } from '../utils/errors';
+
 export function useHeading() {
   const [heading, setHeading] = useState<number | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -21,7 +23,7 @@ export function useHeading() {
         }
       })
       .catch((err) => {
-        if (!cancelled) setErrorMessage(err instanceof Error ? err.message : String(err));
+        if (!cancelled) setErrorMessage(getErrorMessage(err));
       });
 
     return () => {

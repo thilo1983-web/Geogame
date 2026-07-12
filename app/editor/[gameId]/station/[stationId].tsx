@@ -21,6 +21,7 @@ import {
   updateStation,
 } from '../../../../src/data/gameRepository';
 import type { TaskType } from '../../../../src/types/game';
+import { getErrorMessage } from '../../../../src/utils/errors';
 
 const DISABLED_TASK_TYPES: { type: TaskType; label: string }[] = [
   { type: 'multiple_choice', label: 'Multiple Choice' },
@@ -73,7 +74,7 @@ export default function StationForm() {
           setAcceptedAnswersText(station.task.acceptedAnswers.join(', '));
         }
       })
-      .catch((err) => setErrorMessage(err instanceof Error ? err.message : String(err)))
+      .catch((err) => setErrorMessage(getErrorMessage(err)))
       .finally(() => setLoading(false));
   }, [gameId, stationId, isNew]);
 
@@ -120,7 +121,7 @@ export default function StationForm() {
       }
       router.back();
     } catch (err) {
-      setErrorMessage(err instanceof Error ? err.message : String(err));
+      setErrorMessage(getErrorMessage(err));
     } finally {
       setSaving(false);
     }
@@ -137,7 +138,7 @@ export default function StationForm() {
             await deleteStation(stationId);
             router.back();
           } catch (err) {
-            setErrorMessage(err instanceof Error ? err.message : String(err));
+            setErrorMessage(getErrorMessage(err));
           }
         },
       },

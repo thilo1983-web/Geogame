@@ -4,6 +4,7 @@ import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { ensureAnonymousSession } from '../src/lib/supabase';
+import { getErrorMessage } from '../src/utils/errors';
 
 export default function RootLayout() {
   const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('loading');
@@ -13,7 +14,7 @@ export default function RootLayout() {
     ensureAnonymousSession()
       .then(() => setStatus('ready'))
       .catch((err) => {
-        setErrorMessage(err instanceof Error ? err.message : String(err));
+        setErrorMessage(getErrorMessage(err));
         setStatus('error');
       });
   }, []);

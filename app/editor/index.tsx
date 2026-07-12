@@ -12,6 +12,7 @@ import {
 
 import { createGame, listGames } from '../../src/data/gameRepository';
 import type { Game } from '../../src/types/game';
+import { getErrorMessage } from '../../src/utils/errors';
 
 export default function EditorGameList() {
   const router = useRouter();
@@ -25,7 +26,7 @@ export default function EditorGameList() {
     setLoading(true);
     listGames()
       .then(setGames)
-      .catch((err) => setErrorMessage(err instanceof Error ? err.message : String(err)))
+      .catch((err) => setErrorMessage(getErrorMessage(err)))
       .finally(() => setLoading(false));
   }, []);
 
@@ -41,7 +42,7 @@ export default function EditorGameList() {
       setGames((prev) => [game, ...prev]);
       setNewGameName('');
     } catch (err) {
-      setErrorMessage(err instanceof Error ? err.message : String(err));
+      setErrorMessage(getErrorMessage(err));
     } finally {
       setCreating(false);
     }

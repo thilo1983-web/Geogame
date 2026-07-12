@@ -4,6 +4,7 @@ import { ActivityIndicator, FlatList, StyleSheet, Text, TouchableOpacity, View }
 
 import { listGames } from '../../src/data/gameRepository';
 import type { Game } from '../../src/types/game';
+import { getErrorMessage } from '../../src/utils/errors';
 
 export default function PlayerGameList() {
   const router = useRouter();
@@ -15,7 +16,7 @@ export default function PlayerGameList() {
     setLoading(true);
     listGames()
       .then(setGames)
-      .catch((err) => setErrorMessage(err instanceof Error ? err.message : String(err)))
+      .catch((err) => setErrorMessage(getErrorMessage(err)))
       .finally(() => setLoading(false));
   }, []);
 

@@ -2,6 +2,7 @@ import * as Location from 'expo-location';
 import { useEffect, useRef, useState } from 'react';
 
 import type { Station } from '../types/game';
+import { getErrorMessage } from '../utils/errors';
 import { distanceMeters } from '../utils/geo';
 
 export interface GeofencingState {
@@ -58,7 +59,7 @@ export function useGeofencing(stations: Station[], completedStationIds: Set<stri
     }
 
     start().catch((err) => {
-      if (!cancelled) setErrorMessage(err instanceof Error ? err.message : String(err));
+      if (!cancelled) setErrorMessage(getErrorMessage(err));
     });
 
     return () => {

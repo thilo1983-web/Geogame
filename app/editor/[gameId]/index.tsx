@@ -5,6 +5,7 @@ import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from 'rea
 import { getGame, listStations } from '../../../src/data/gameRepository';
 import { StationMap } from '../../../src/components/StationMap';
 import type { Game, Station } from '../../../src/types/game';
+import { getErrorMessage } from '../../../src/utils/errors';
 
 const DEFAULT_REGION = {
   latitude: 52.520008,
@@ -32,7 +33,7 @@ export default function EditorGameDetail() {
         setGame(g);
         setStations(s);
       })
-      .catch((err) => setErrorMessage(err instanceof Error ? err.message : String(err)))
+      .catch((err) => setErrorMessage(getErrorMessage(err)))
       .finally(() => setLoading(false));
   }, [gameId]);
 

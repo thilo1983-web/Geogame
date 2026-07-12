@@ -19,6 +19,7 @@ import { getGame, listStations } from '../../src/data/gameRepository';
 import { useGeofencing } from '../../src/hooks/useGeofencing';
 import { useProgress } from '../../src/state/progressStore';
 import type { Game, Station } from '../../src/types/game';
+import { getErrorMessage } from '../../src/utils/errors';
 
 export default function PlayGame() {
   const { gameId } = useLocalSearchParams<{ gameId: string }>();
@@ -39,7 +40,7 @@ export default function PlayGame() {
         setGame(g);
         setStations(s);
       })
-      .catch((err) => setErrorMessage(err instanceof Error ? err.message : String(err)))
+      .catch((err) => setErrorMessage(getErrorMessage(err)))
       .finally(() => setLoading(false));
   }, [gameId]);
 
