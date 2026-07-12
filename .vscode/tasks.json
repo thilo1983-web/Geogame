@@ -2,9 +2,9 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "Start Expo",
+      "label": "Start Expo (tunnel)",
       "type": "shell",
-      "command": "npx expo start",
+      "command": "npx expo start --tunnel",
       "isBackground": true,
       "problemMatcher": [],
       "runOptions": {
