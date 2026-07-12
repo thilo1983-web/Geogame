@@ -1,5 +1,13 @@
 {
   "name": "Geogame (Expo)",
   "image": "mcr.microsoft.com/devcontainers/javascript-node:1-22-bookworm",
-  "postCreateCommand": "npm install --legacy-peer-deps"
+  "postCreateCommand": "npm install --legacy-peer-deps",
+  "forwardPorts": [8081],
+  "portsAttributes": {
+    "8081": {
+      "label": "Metro Bundler",
+      "onAutoForward": "notify",
+      "visibility": "public"
+    }
+  }
 }
