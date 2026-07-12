@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 import type { Station } from '../types/game';
+import { playSuccessSound } from '../utils/sound';
 
 interface TaskModalProps {
   station: Station | null;
@@ -29,6 +30,7 @@ export function TaskModal({ station, onCorrectAnswer, onDismiss }: TaskModalProp
     if (isAnswerCorrect(answer, station.task.acceptedAnswers)) {
       setAnswer('');
       setShowError(false);
+      playSuccessSound();
       onCorrectAnswer(station);
     } else {
       setShowError(true);
